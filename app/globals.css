@@ -1,0 +1,47 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------- */
+/* 1. DARK THEME VARIABLES (Default) */
+/* ------------------------------------------- */
+:root, [data-theme="dark"] {
+    --color-bg: #111827;       /* Deep Charcoal */
+    --color-base: #f9fafb;     /* Light Off-White (Text) */
+    --color-primary: #3b82f6;  /* Blue (Links, Highlights) */
+    --color-accent: #f59e0b;   /* Amber (Buttons, CTA) */
+    --color-muted: #6b7280;    /* Muted Grey (Secondary Text, Borders) */
+}
+
+/* ------------------------------------------- */
+/* 2. LIGHT THEME VARIABLES */
+/* ------------------------------------------- */
+[data-theme="light"] {
+    --color-bg: #ffffff;       /* Pure White */
+    --color-base: #1f2937;     /* Dark Grey (Text) */
+    --color-primary: #1d4ed8;  /* Darker Blue */
+    --color-accent: #d97706;   /* Darker Amber */
+    --color-muted: #9ca3af;    /* Lighter Grey */
+}
+
+/* ------------------------------------------- */
+/* 3. Custom Base Styles */
+/* ------------------------------------------- */
+body {
+    transition: background-color 0.5s, color 0.5s;
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-bg); 
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-muted);
+    border-radius: 4px;
+}
