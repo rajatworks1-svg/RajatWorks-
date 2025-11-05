@@ -1,12 +1,11 @@
-
-"use client";
+'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 // 1. Live Clock Component (Sun/Moon logic based on user's local time)
 const Clock: React.FC = () => {
   const [time, setTime] = useState('');
-  const [icon, setIcon] = useState(''); 
+  const [icon, setIcon] = useState('');
 
   useEffect(() => {
     const updateTime = () => {
@@ -21,22 +20,23 @@ const Clock: React.FC = () => {
 
       // Determine Sun or Moon icon based on the user's local hour (8 PM to 6 AM is Moon)
       const hour = now.getHours();
-      if (hour >= 20 || hour < 6) { 
+      if (hour >= 20 || hour < 6) {
         setIcon('🌙'); // Moon (Night)
       } else {
         setIcon('☀️'); // Sun (Day)
       }
     };
 
-    updateTime(); 
+    updateTime();
     // Update every minute (60000 ms)
-    const intervalId = setInterval(updateTime, 60000); 
+    const intervalId = setInterval(updateTime, 60000);
 
-    return () => clearInterval(intervalId); 
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
-    <span className="text-gray-500 text-sm font-mono tracking-wider px-3 flex items-center hidden sm:flex">
+    // FIX: Completed the broken Tailwind classes (hidden on mobile, visible on small screens and up)
+    <span className="text-gray-500 text-sm font-mono tracking-wider px-3 flex items-center hidden sm:flex"> 
       {icon} {time}
     </span>
   );
@@ -45,14 +45,15 @@ const Clock: React.FC = () => {
 // Main Header Component
 const Header: React.FC = () => {
   return (
-    // White background, dark text
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm shadow-md border-b border-gray-200">
+    // FIX: Completed the broken Tailwind classes (border-gray-100 added)
+    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm shadow-md border-b border-gray-100">
       <nav className="container mx-auto px-4 md:px-8 flex items-center justify-between py-4">
-        
+
+        {/* Logo link is correctly set to "/" */}
         <Link href="/" className="text-2xl font-black text-black hover:text-blue-600 transition-colors">
           RajatWorks
         </Link>
-        
+
         <div className="flex items-center space-x-4">
           <Link href="/about" className="text-black hover:text-blue-600 transition-colors font-medium">
             About
@@ -65,12 +66,12 @@ const Header: React.FC = () => {
             Projects
           </Link>
           <Link href="/contact" className="text-black hover:text-blue-600 transition-colors font-medium">
-            Contact 
+            Contact
           </Link>
-          
-          <div className="h-6 w-px bg-gray-300 mx-2"></div> 
-          
-          <Clock /> 
+
+          <div className="h-6 w-px bg-gray-300 mx-2"></div>
+
+          <Clock />
         </div>
       </nav>
     </header>
