@@ -1,115 +1,102 @@
+'use client';
 
-
-
-"use client";
 import React from 'react';
 import { motion } from 'framer-motion';
-// ChevronRight is still needed for the ServiceCard component, even if unused now.
-import { ChevronRight } from 'lucide-react'; 
+import { Code, Smartphone, Globe, TrendingUp } from 'lucide-react'; // Icons
 
-// --- ANIMATION VARIANTS ---
+// Framer Motion Variants
 const containerVariants = {
   hidden: { opacity: 0 },
-  show: {
+  visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1, // Delay between each service card
-    }
-  }
+      staggerChildren: 0.1,
+    },
+  },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, scale: 0.9, y: 20 },
-  show: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 100 } }
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 0.5 } },
 };
 
-// --- SERVICE CARD COMPONENT (Cleaned) ---
+// Service Card Component
 interface ServiceCardProps {
-    title: string;
-    description: string;
-    icon: string;
-    color: string;
+  icon: React.ReactNode;
+  title: string;
+  keys: string;
+  description: string;
 }
 
-const ServiceCard: React.FC<ServiceCardProps> = ({ title, description, icon, color }) => (
-    <motion.div 
-        variants={itemVariants} 
-        className={`bg-white p-6 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow cursor-default`}
-    >
-        <div className="flex items-start mb-4">
-            <span className={`text-4xl ${color} mr-4`}>{icon}</span>
-            <div>
-                <h3 className="text-xl font-bold text-gray-900">{title}</h3>
-                <p className="text-sm text-gray-500 mt-1">Key Skills: Next.js, R3F, PostgreSQL, Tailwind CSS</p>
-            </div>
-        </div>
-        <p className="text-gray-700 leading-relaxed">{description}</p>
-        {/* The "Learn More" div has been removed here */}
-    </motion.div>
+const ServiceCard: React.FC<ServiceCardProps> = ({ icon, title, keys, description }) => (
+  <motion.div 
+    variants={itemVariants} 
+    className="bg-white p-6 md:p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100"
+  >
+    <div className="flex items-center space-x-4 mb-4">
+      <div className="p-3 bg-blue-500/10 rounded-full text-blue-600">
+        {icon}
+      </div>
+      <h3 className="text-xl font-bold text-gray-900">{title}</h3>
+    </div>
+    <p className="text-xs font-semibold text-gray-500 mb-2">Key Skills: {keys}</p>
+    <p className="text-gray-600 leading-relaxed">{description}</p>
+  </motion.div>
 );
 
-
-// --- MAIN PAGE COMPONENT ---
-const ServicesPage: React.FC = () => {
+// Main Services Page Component
+export default function Services() {
   return (
-    <main className="container mx-auto p-4 md:p-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="text-center mb-10"
+    <motion.div
+      className="container mx-auto px-4 py-12 md:py-20 max-w-5xl"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.h1 
+        className="text-4xl md:text-5xl font-extrabold text-center text-gray-900 mb-3"
+        variants={itemVariants}
       >
-        <h1 className="text-4xl md:text-5xl font-extrabold text-black mb-3">
-          My Professional Services
-        </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Providing high-impact development solutions centered around performance, modern design, and robust engineering.
-        </p>
-      </motion.div>
-
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-6xl mx-auto"
+        My Professional Services
+      </motion.h1>
+      
+      <motion.p 
+        className="text-lg text-center text-gray-600 mb-12 max-w-3xl mx-auto"
+        variants={itemVariants}
       >
-        
-        {/* SERVICE 1: Full-Stack App Dev */}
+        Providing high-impact development solutions centered around performance, modern design, and robust engineering.
+      </motion.p>
+
+      {/* FIX: Mobile par grid-cols-1 (Vertical) aur Tablet/Desktop par grid-cols-2 */}
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <ServiceCard
-            title="Full-Stack Application Development"
-            description="Building complete, scalable, and secure web applications from initial database design and API architecture to deployment and continuous integration."
-            icon="⚙️"
-            color="text-green-600"
+          icon={<Code size={24} />}
+          title="Full-Stack Application Development"
+          keys="Next.js, R3F, PostgreSQL, Tailwind CSS"
+          description="Building complete, scalable, and secure web applications from initial database design and API architecture to deployment and continuous integration."
         />
 
-        {/* SERVICE 2: Modern Frontend */}
         <ServiceCard
-            title="Modern Frontend & UI/UX"
-            description="Crafting highly interactive, fast, and responsive user interfaces using React/Next.js and Tailwind CSS for exceptional user experiences across all devices."
-            icon="📱"
-            color="text-blue-600"
-        />
-        
-        {/* SERVICE 3: 3D Web Graphics */}
-        <ServiceCard
-            title="3D Web Experiences (Web Graphics)"
-            description="Designing and implementing unique, immersive 3D scenes and dynamic visualizations directly in the browser using React Three Fiber (R3F) and Three.js."
-            icon="🌎"
-            color="text-purple-600"
+          icon={<Smartphone size={24} />}
+          title="Modern Frontend & UI/UX"
+          keys="React/Next.js, R3F, PostgreSQL, Tailwind CSS"
+          description="Crafting highly interactive, fast, and responsive user interfaces using React/Next.js and Tailwind CSS for exceptional user experiences across all devices."
         />
 
-        {/* SERVICE 4: Performance Optimization */}
         <ServiceCard
-            title="Performance Optimization"
-            description="Analyzing and refining existing codebases to achieve significant improvements in application speed, SEO rankings, and overall page loading times."
-            icon="⚡"
-            color="text-yellow-600"
+          icon={<Globe size={24} />}
+          title="3D Web Experiences (Web Graphics)"
+          keys="Next.js, R3F, PostgreSQL, Tailwind CSS"
+          description="Designing and implementing unique, immersive 3D scenes and dynamic visualizations directly in the browser using React Three Fiber (R3F) and Three.js."
         />
-        
-      </motion.div>
-    </main>
+
+        <ServiceCard
+          icon={<TrendingUp size={24} />}
+          title="Performance Optimization"
+          keys="Next.js, R3F, PostgreSQL, Tailwind CSS"
+          description="Analyzing and refining existing codebases to achieve significant improvements in application speed, SEO rankings, and overall page loading times."
+        />
+      </div>
+    </motion.div>
   );
-};
-
-export default ServicesPage;
-
+}
