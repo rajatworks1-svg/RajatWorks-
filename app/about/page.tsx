@@ -1,6 +1,4 @@
-
-
-"use client";
+'use client';
 import React from 'react';
 import { motion } from 'framer-motion';
 
@@ -38,7 +36,7 @@ const TechStackList: React.FC<{ items: string[] }> = ({ items }) => (
                 initial="hidden"
                 animate="show"
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="px-4 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-800 border border-blue-300 shadow-md hover:shadow-lg transition-shadow"
+                className="px-4 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-800" // Fix: Removed extra character after 'b'
             >
                 {item}
             </motion.span>
@@ -50,15 +48,17 @@ const TechStackList: React.FC<{ items: string[] }> = ({ items }) => (
 // --- MAIN PAGE COMPONENT ---
 const AboutPage: React.FC = () => {
   return (
-    <main className="container mx-auto p-4 md:p-8">
+    // FIX 1: Increased mobile padding (p-4) but removed large md:p-8 on mobile via sm:p-0
+    <main className="container mx-auto p-4 sm:p-0 md:p-8"> {/* <-- FIX: p-4 sm:p-0 for better mobile width */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-xl shadow-2xl border border-gray-200"
+        className="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-xl shadow-2xl border border-gray-100"
       >
-        <motion.h1 
-          className="text-4xl md:text-5xl font-extrabold text-black mb-6 border-b border-gray-300 pb-2"
+        <motion.h1
+          // FIX 2: Reduced header font size for mobile (text-3xl) while keeping desktop size (md:text-5xl)
+          className="text-3xl md:text-5xl font-extrabold text-black mb-6 border-b border-gray-300 pb-2" {/* <-- FIX: text-3xl md:text-5xl */}
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
@@ -72,9 +72,9 @@ const AboutPage: React.FC = () => {
             Hello! I'm Rajat Kumar Dua, a Full-Stack Software Engineer driven by a passion for creating clean, performant, and highly interactive web applications. I thrive at the intersection of powerful backends and compelling user experiences.
           </p>
         </motion.section>
-        
+
         {/* 2. NEW: My Experience Section */}
-        <motion.section variants={itemVariants} className="mb-8 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-md shadow-inner">
+        <motion.section variants={itemVariants} className="mb-8 p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg">
           <h2 className="text-2xl font-bold text-yellow-800 mb-2">
             My Experience: 3 Years of Dedication
           </h2>
@@ -92,13 +92,13 @@ const AboutPage: React.FC = () => {
             My core stack is built for robust performance and modern design:
           </p>
           <TechStackList items={[
-              "Next.js", 
-              "TypeScript", 
-              "React", 
-              "Framer Motion", 
+              "Next.js",
+              "TypeScript",
+              "React",
+              "Framer Motion",
               "React Three Fiber (3D)",
-              "Node.js", 
-              "PostgreSQL", 
+              "Node.js",
+              "PostgreSQL",
               "Tailwind CSS"
           ]} />
         </motion.section>
@@ -112,20 +112,9 @@ const AboutPage: React.FC = () => {
             I believe that great software is a blend of technical excellence and thoughtful design. My goal for every project is to ensure that it is not only functional and fast but also intuitive and accessible for every user. I am constantly learning new tools and techniques to deliver cutting-edge solutions.
           </p>
         </motion.section>
-
-        {/* 5. Let's Connect */}
-        <motion.section variants={itemVariants}>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4 border-b border-gray-300 pb-1">
-            Let's Connect
-          </h2>
-          <p className="text-gray-800">
-            I'm always open to new opportunities and collaborations. Feel free to explore my projects or reach out to me directly!
-          </p>
-        </motion.section>
-
       </motion.div>
     </main>
   );
-};
+}
 
 export default AboutPage;

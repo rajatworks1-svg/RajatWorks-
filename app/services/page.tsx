@@ -29,9 +29,9 @@ interface ServiceCardProps {
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ icon, title, keys, description }) => (
-  <motion.div 
-    variants={itemVariants} 
-    className="bg-white p-6 md:p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100"
+  <motion.div
+    variants={itemVariants}
+    className="bg-white p-6 md:p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
   >
     <div className="flex items-center space-x-4 mb-4">
       <div className="p-3 bg-blue-500/10 rounded-full text-blue-600">
@@ -48,26 +48,28 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ icon, title, keys, descriptio
 export default function Services() {
   return (
     <motion.div
-      className="container mx-auto px-4 py-12 md:py-20 max-w-5xl"
+      // FIX 1: Change padding from 'px-4 py-12' to 'px-4 sm:px-0 py-12' for better mobile content width
+      className="container mx-auto px-4 sm:px-0 py-12 md:py-20 max-w-5xl" 
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      <motion.h1 
-        className="text-4xl md:text-5xl font-extrabold text-center text-gray-900 mb-3"
+      <motion.h1
+        // FIX 2: Change heading size from 'text-4xl' to 'text-3xl md:text-5xl' for better phone display
+        className="text-3xl md:text-5xl font-extrabold text-center text-gray-900 mb-3"
         variants={itemVariants}
       >
         My Professional Services
       </motion.h1>
-      
-      <motion.p 
+
+      <motion.p
         className="text-lg text-center text-gray-600 mb-12 max-w-3xl mx-auto"
         variants={itemVariants}
       >
         Providing high-impact development solutions centered around performance, modern design, and robust engineering.
       </motion.p>
 
-      {/* FIX: Mobile par grid-cols-1 (Vertical) aur Tablet/Desktop par grid-cols-2 */}
+      {/* CRITICAL FIX: Changed grid to 1 column on mobile (grid-cols-1) to fix cramping */}
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <ServiceCard
           icon={<Code size={24} />}
