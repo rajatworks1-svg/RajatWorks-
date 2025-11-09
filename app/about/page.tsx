@@ -1,8 +1,9 @@
 'use client';
+
 import React from 'react';
 import { motion } from 'framer-motion';
 
-// --- ANIMATION VARIANTS ---
+// --- ANIMATION VARIANTS  ---
 const containerVariants = {
   hidden: { opacity: 0 },
   show: {
@@ -25,14 +26,14 @@ const techVariants = {
 }
 
 // --- KEY COMPONENTS ---
-
-// Component for a list of highlighted tech
 const TechStackList: React.FC<{ items: string[] }> = ({ items }) => (
-    <motion.div 
+ 
+    <motion.div
         className="flex flex-wrap gap-2 mt-2"
         variants={containerVariants}
         initial="hidden"
-        animate="show"
+        whileInView="show" // Use whileInView for scroll-based animation trigger
+        viewport={{ once: true, amount: 0.5 }} // Trigger only once when 50% visible
     >
         {items.map((item, index) => (
             <motion.span
@@ -47,24 +48,21 @@ const TechStackList: React.FC<{ items: string[] }> = ({ items }) => (
     </motion.div>
 );
 
-
 // --- MAIN PAGE COMPONENT ---
 const AboutPage: React.FC = () => {
   return (
-    // Removed the inline padding/container class here; layout.tsx handles it now.
+    // Base layout wrapper
     <div className="py-8">
+      {/* Motion container for the main content card */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
-        animate="show"
-        className="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-xl shadow-2xl border border-gray-100" // Syntax Fixed here
+        animate="show" // Animate on load
+        className="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-xl shadow-2xl border border-gray-100" // CLEANED LINE
       >
         <motion.h1
-          // FIX: Adjusted header font size for better mobile feel
+       
           className="text-3xl md:text-5xl font-extrabold text-black mb-6 border-b border-gray-300 pb-2"
-          initial={{ x: -100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.5 }}
         >
           About Me
         </motion.h1>
@@ -77,7 +75,7 @@ const AboutPage: React.FC = () => {
         </motion.section>
 
         {/* 2. My Experience Section */}
-        <motion.section variants={itemVariants} className="mb-8 p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg shadow-sm">
+        <motion.section variants={itemVariants} className="mb-8 p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg shadow-md">
           <h2 className="text-2xl font-bold text-yellow-800 mb-2">
             My Experience: 3 Years of Dedication
           </h2>
@@ -120,4 +118,4 @@ const AboutPage: React.FC = () => {
   );
 }
 
-export default AboutPage;
+export default AboutPage; 
