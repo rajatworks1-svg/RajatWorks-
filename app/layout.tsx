@@ -20,7 +20,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <div className="flex flex-col min-h-screen">
           <Header />
-          {/* FIX: Added px-4 for default mobile padding, md:px-8 keeps desktop looking good. */}
+      
           <main className="flex-grow px-4 md:px-8"> 
             {children}
           </main>
@@ -29,3 +29,4 @@ export default function RootLayout({
       </body>
     </html>
   );
+}
