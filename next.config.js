@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // This setting tells Next.js and Vercel to correctly use the new 'app' directory structure.
+    // This setting is CRITICAL for Vercel to recognize the 'app' directory
     experimental: {
         appDir: true,
     },

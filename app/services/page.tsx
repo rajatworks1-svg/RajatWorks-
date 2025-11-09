@@ -1,104 +1,74 @@
-'use client';
-
 import React from 'react';
+import { Lightbulb, LayoutGrid, Zap, Code } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Code, Smartphone, Globe, TrendingUp } from 'lucide-react'; // Icons
 
-// Framer Motion Variants
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
+// Metadata and component definitions...
+// ... (Your other imports and component logic)
+// ...
 
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { duration: 0.5 } },
-};
-
-// Service Card Component
-interface ServiceCardProps {
-  icon: React.ReactNode;
-  title: string;
-  keys: string;
-  description: string;
-}
-
-const ServiceCard: React.FC<ServiceCardProps> = ({ icon, title, keys, description }) => (
-  <motion.div
-    variants={itemVariants}
-    className="bg-white p-6 md:p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
-  >
-    <div className="flex items-center space-x-4 mb-4">
-      <div className="p-3 bg-blue-500/10 rounded-full text-blue-600">
-        {icon}
-      </div>
-      <h3 className="text-xl font-bold text-gray-900">{title}</h3>
-    </div>
-    <p className="text-xs font-semibold text-gray-500 mb-2">Key Skills: {keys}</p>
-    <p className="text-gray-600 leading-relaxed">{description}</p>
-  </motion.div>
+const ServiceCard = ({ icon: Icon, title, description, skills, delay }) => (
+    <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: delay }}
+        className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 ease-in-out border border-gray-100"
+    >
+        <div className="flex items-center mb-4">
+            <Icon className="w-8 h-8 text-indigo-600 mr-3" />
+            <h3 className="text-xl font-bold text-gray-900">{title}</h3>
+        </div>
+        <p className="text-sm text-gray-600 mb-3">{description}</p>
+        <p className="text-xs font-semibold text-indigo-500 mt-4">Key Skills: {skills}</p>
+    </motion.div>
 );
 
-// Main Services Page Component
-export default function Services() {
-  return (
-    <motion.div
-      // FIX 1: Change padding from 'px-4 py-12' to 'px-4 sm:px-0 py-12' for better mobile content width
-      className="container mx-auto px-4 sm:px-0 py-12 md:py-20 max-w-5xl" 
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      <motion.h1
-        // FIX 2: Change heading size from 'text-4xl' to 'text-3xl md:text-5xl' for better phone display
-        className="text-3xl md:text-5xl font-extrabold text-center text-gray-900 mb-3"
-        variants={itemVariants}
-      >
-        My Professional Services
-      </motion.h1>
+const ServicesPage = () => {
+    // ... (Your page structure)
+    return (
+        <div className="py-12 px-4 md:px-8">
+            <div className="max-w-6xl mx-auto">
+                {/* Header (Keep it simple, layout handles main padding) */}
+                <h1 className="text-4xl md:text-5xl font-extrabold text-center mb-4 text-gray-900">
+                    My Professional Services
+                </h1>
+                <p className="text-xl text-center text-gray-600 mb-12 max-w-3xl mx-auto">
+                    Providing high-impact development solutions centered around performance, modern design, and robust engineering.
+                </p>
 
-      <motion.p
-        className="text-lg text-center text-gray-600 mb-12 max-w-3xl mx-auto"
-        variants={itemVariants}
-      >
-        Providing high-impact development solutions centered around performance, modern design, and robust engineering.
-      </motion.p>
+                {/* FIX: grid-cols-1 for mobile, md:grid-cols-2 for desktop */}
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                    <ServiceCard
+                        icon={Code}
+                        title="Full-Stack Application Development"
+                        description="Building complete, scalable, and secure web applications from initial database design and API architecture to deployment and continuous integration."
+                        skills="Next.js, R3F, PostgreSQL, Tailwind CSS"
+                        delay={0.1}
+                    />
+                    <ServiceCard
+                        icon={LayoutGrid}
+                        title="Modern Frontend & UI/UX"
+                        description="Crafting highly interactive, fast, and responsive user interfaces using React/Next.js and Tailwind CSS for exceptional user experiences across all devices."
+                        skills="Next.js, R3F, PostgreSQL, Tailwind CSS"
+                        delay={0.2}
+                    />
+                    <ServiceCard
+                        icon={Lightbulb}
+                        title="3D Web Experiences (Web Graphics)"
+                        description="Designing and implementing unique, immersive 3D scenes and dynamic visualizations directly in the browser using React Three Fiber (R3F) and Three.js."
+                        skills="Next.js, R3F, PostgreSQL, Tailwind CSS"
+                        delay={0.3}
+                    />
+                    <ServiceCard
+                        icon={Zap}
+                        title="Performance Optimization"
+                        description="Analyzing and refining existing codebases to achieve significant improvements in application speed, SEO rankings, and overall page loading times."
+                        skills="Next.js, R3F, PostgreSQL, Tailwind CSS"
+                        delay={0.4}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+};
 
-      {/* CRITICAL FIX: Changed grid to 1 column on mobile (grid-cols-1) to fix cramping */}
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-        <ServiceCard
-          icon={<Code size={24} />}
-          title="Full-Stack Application Development"
-          keys="Next.js, R3F, PostgreSQL, Tailwind CSS"
-          description="Building complete, scalable, and secure web applications from initial database design and API architecture to deployment and continuous integration."
-        />
-
-        <ServiceCard
-          icon={<Smartphone size={24} />}
-          title="Modern Frontend & UI/UX"
-          keys="React/Next.js, R3F, PostgreSQL, Tailwind CSS"
-          description="Crafting highly interactive, fast, and responsive user interfaces using React/Next.js and Tailwind CSS for exceptional user experiences across all devices."
-        />
-
-        <ServiceCard
-          icon={<Globe size={24} />}
-          title="3D Web Experiences (Web Graphics)"
-          keys="Next.js, R3F, PostgreSQL, Tailwind CSS"
-          description="Designing and implementing unique, immersive 3D scenes and dynamic visualizations directly in the browser using React Three Fiber (R3F) and Three.js."
-        />
-
-        <ServiceCard
-          icon={<TrendingUp size={24} />}
-          title="Performance Optimization"
-          keys="Next.js, R3F, PostgreSQL, Tailwind CSS"
-          description="Analyzing and refining existing codebases to achieve significant improvements in application speed, SEO rankings, and overall page loading times."
-        />
-      </div>
-    </motion.div>
-  );
-}
+export default ServicesPage;

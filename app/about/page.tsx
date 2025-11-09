@@ -28,37 +28,40 @@ const techVariants = {
 
 // Component for a list of highlighted tech
 const TechStackList: React.FC<{ items: string[] }> = ({ items }) => (
-    <div className="flex flex-wrap gap-2 mt-2">
+    <motion.div 
+        className="flex flex-wrap gap-2 mt-2"
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+    >
         {items.map((item, index) => (
             <motion.span
                 key={index}
                 variants={techVariants}
-                initial="hidden"
-                animate="show"
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="px-4 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-800" // Fix: Removed extra character after 'b'
+                transition={{ delay: index * 0.05, duration: 0.3 }}
+                className="px-4 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-800"
             >
                 {item}
             </motion.span>
         ))}
-    </div>
+    </motion.div>
 );
 
 
 // --- MAIN PAGE COMPONENT ---
 const AboutPage: React.FC = () => {
   return (
-    // FIX 1: Increased mobile padding (p-4) but removed large md:p-8 on mobile via sm:p-0
-    <main className="container mx-auto p-4 sm:p-0 md:p-8"> {/* <-- FIX: p-4 sm:p-0 for better mobile width */}
+    // Removed the inline padding/container class here; layout.tsx handles it now.
+    <div className="py-8">
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-xl shadow-2xl border border-gray-100"
+        className="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-xl shadow-2xl border border-gray-100" // Syntax Fixed here
       >
         <motion.h1
-          // FIX 2: Reduced header font size for mobile (text-3xl) while keeping desktop size (md:text-5xl)
-          className="text-3xl md:text-5xl font-extrabold text-black mb-6 border-b border-gray-300 pb-2" {/* <-- FIX: text-3xl md:text-5xl */}
+          // FIX: Adjusted header font size for better mobile feel
+          className="text-3xl md:text-5xl font-extrabold text-black mb-6 border-b border-gray-300 pb-2"
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
@@ -73,8 +76,8 @@ const AboutPage: React.FC = () => {
           </p>
         </motion.section>
 
-        {/* 2. NEW: My Experience Section */}
-        <motion.section variants={itemVariants} className="mb-8 p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg">
+        {/* 2. My Experience Section */}
+        <motion.section variants={itemVariants} className="mb-8 p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg shadow-sm">
           <h2 className="text-2xl font-bold text-yellow-800 mb-2">
             My Experience: 3 Years of Dedication
           </h2>
@@ -113,7 +116,7 @@ const AboutPage: React.FC = () => {
           </p>
         </motion.section>
       </motion.div>
-    </main>
+    </div>
   );
 }
 
