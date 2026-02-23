@@ -110,9 +110,9 @@ const projectData = [
   },
 ];
 
-// =============================================
-// LIGHTBOX (Fullscreen viewer)
-// =============================================
+// ─────────────────────────────────────────────
+// LIGHTBOX
+// ─────────────────────────────────────────────
 const Lightbox: React.FC<{
   images: string[];
   startIndex: number;
@@ -123,7 +123,6 @@ const Lightbox: React.FC<{
   const prev = () => setCurrent((c) => (c === 0 ? images.length - 1 : c - 1));
   const next = () => setCurrent((c) => (c === images.length - 1 ? 0 : c + 1));
 
-  // Close on Escape key
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -134,7 +133,6 @@ const Lightbox: React.FC<{
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  // Prevent body scroll when lightbox open
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = ''; };
@@ -144,17 +142,14 @@ const Lightbox: React.FC<{
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/95"
       onClick={onClose}
     >
-      {/* Close button */}
+      {/* Close */}
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 text-white bg-white/10 hover:bg-white/20 rounded-full w-10 h-10 flex items-center justify-center text-xl z-10 transition-all"
-      >
-        ✕
-      </button>
+        className="absolute top-4 right-4 text-white bg-white/10 hover:bg-white/25 rounded-full w-10 h-10 flex items-center justify-center text-xl z-10 transition-all"
+      >✕</button>
 
       {/* Counter */}
       <div className="absolute top-4 left-1/2 -translate-x-1/2 text-white/70 text-sm bg-black/40 px-3 py-1 rounded-full">
@@ -165,21 +160,19 @@ const Lightbox: React.FC<{
       {images.length > 1 && (
         <button
           onClick={(e) => { e.stopPropagation(); prev(); }}
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-white/10 hover:bg-white/25 rounded-full w-12 h-12 flex items-center justify-center text-2xl transition-all z-10"
-        >
-          ‹
-        </button>
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-white/10 hover:bg-white/25 rounded-full w-12 h-12 flex items-center justify-center text-3xl transition-all z-10"
+        >‹</button>
       )}
 
       {/* Image */}
       <motion.img
         key={current}
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.93 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.2 }}
         src={images[current]}
         alt={`Image ${current + 1}`}
-        className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg select-none"
+        className="max-w-[90vw] max-h-[90vh] object-contain rounded-xl select-none shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       />
 
@@ -187,22 +180,18 @@ const Lightbox: React.FC<{
       {images.length > 1 && (
         <button
           onClick={(e) => { e.stopPropagation(); next(); }}
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-white bg-white/10 hover:bg-white/25 rounded-full w-12 h-12 flex items-center justify-center text-2xl transition-all z-10"
-        >
-          ›
-        </button>
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-white bg-white/10 hover:bg-white/25 rounded-full w-12 h-12 flex items-center justify-center text-3xl transition-all z-10"
+        >›</button>
       )}
 
-      {/* Dot indicators */}
+      {/* Dots */}
       {images.length > 1 && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
           {images.map((_, i) => (
             <button
               key={i}
               onClick={(e) => { e.stopPropagation(); setCurrent(i); }}
-              className={`rounded-full transition-all duration-200 ${
-                i === current ? 'bg-white w-4 h-2' : 'bg-white/40 w-2 h-2'
-              }`}
+              className={`rounded-full transition-all duration-200 ${i === current ? 'bg-white w-4 h-2' : 'bg-white/40 w-2 h-2'}`}
             />
           ))}
         </div>
@@ -211,88 +200,91 @@ const Lightbox: React.FC<{
   );
 };
 
-// =============================================
-// THUMBNAIL CAROUSEL (in card)
-// =============================================
-const ImageCarousel: React.FC<{ images: string[]; title: string }> = ({ images, title }) => {
-  const [current, setCurrent] = useState(0);
+// ─────────────────────────────────────────────
+// STACKED IMAGES (Instagram style)
+// ─────────────────────────────────────────────
+const StackedImages: React.FC<{ images: string[]; title: string }> = ({ images, title }) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
-  const prev = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCurrent((c) => (c === 0 ? images.length - 1 : c - 1));
-  };
-  const next = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCurrent((c) => (c === images.length - 1 ? 0 : c + 1));
+  // Show max 4 stacked, rest hidden
+  const visible = images.slice(0, Math.min(4, images.length));
+
+  // Rotation for each card in stack
+  const rotations = [3, -2, 5, -4];
+  const offsets = [
+    { x: 8, y: 0 },
+    { x: -6, y: 4 },
+    { x: 10, y: 8 },
+    { x: -4, y: 12 },
+  ];
+
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
   };
 
   return (
     <>
-      {/* Thumbnail */}
+      {/* Stack container */}
       <div
-        className="relative mb-4 rounded-lg overflow-hidden group cursor-zoom-in"
-        onClick={() => setLightboxOpen(true)}
+        className="relative flex items-center justify-center mb-6 cursor-pointer"
+        style={{ height: '220px' }}
+        onClick={() => openLightbox(0)}
       >
-        <div className="h-56 bg-black flex items-center justify-center">
-          <img
-            src={images[current]}
-            alt={`${title} screenshot ${current + 1}`}
-            className="max-w-full max-h-full w-full h-full object-contain transition-opacity duration-300"
-          />
-        </div>
+        {/* Render from back to front */}
+        {[...visible].reverse().map((img, reversedIndex) => {
+          const index = visible.length - 1 - reversedIndex;
+          const isTop = index === 0;
+          const rotation = rotations[index] || 0;
+          const offset = offsets[index] || { x: 0, y: 0 };
 
-        {/* Zoom hint */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-200 flex items-center justify-center">
-          <span className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs bg-black/60 px-2 py-1 rounded-full">
-            🔍 Tap to expand
+          return (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.08 }}
+              whileHover={isTop ? { scale: 1.03, rotate: 0 } : {}}
+              style={{
+                position: 'absolute',
+                rotate: `${rotation}deg`,
+                translateX: offset.x,
+                translateY: offset.y,
+                zIndex: index + 1,
+              }}
+              className={`rounded-2xl overflow-hidden shadow-lg border-4 border-white bg-white ${
+                isTop ? 'shadow-xl' : 'shadow-md'
+              }`}
+            >
+              <img
+                src={img}
+                alt={`${title} ${index + 1}`}
+                style={{ width: '180px', height: '160px', objectFit: 'contain', background: 'white' }}
+              />
+              {/* Image count badge on top card */}
+              {isTop && images.length > 1 && (
+                <div className="absolute top-2 right-2 bg-black/60 text-white text-xs px-1.5 py-0.5 rounded-full font-semibold">
+                  1/{images.length}
+                </div>
+              )}
+            </motion.div>
+          );
+        })}
+
+        {/* Tap hint overlay on top */}
+        <div className="absolute inset-0 flex items-end justify-center pb-2 z-20 pointer-events-none">
+          <span className="text-xs text-gray-400 bg-white/80 px-2 py-0.5 rounded-full shadow">
+            Tap to view all {images.length} photos
           </span>
         </div>
-
-        {images.length > 1 && (
-          <>
-            {/* Left arrow */}
-            <button
-              onClick={prev}
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/90 text-white rounded-full w-8 h-8 flex items-center justify-center text-xl transition-all opacity-0 group-hover:opacity-100 z-10"
-            >
-              ‹
-            </button>
-
-            {/* Right arrow */}
-            <button
-              onClick={next}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/90 text-white rounded-full w-8 h-8 flex items-center justify-center text-xl transition-all opacity-0 group-hover:opacity-100 z-10"
-            >
-              ›
-            </button>
-
-            {/* Counter */}
-            <div className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded-full z-10">
-              {current + 1}/{images.length}
-            </div>
-
-            {/* Dots */}
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-              {images.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={(e) => { e.stopPropagation(); setCurrent(i); }}
-                  className={`rounded-full transition-all duration-200 ${
-                    i === current ? 'bg-white w-3 h-1.5' : 'bg-white/50 w-1.5 h-1.5'
-                  }`}
-                />
-              ))}
-            </div>
-          </>
-        )}
       </div>
 
       {/* Lightbox */}
       {lightboxOpen && (
         <Lightbox
           images={images}
-          startIndex={current}
+          startIndex={lightboxIndex}
           onClose={() => setLightboxOpen(false)}
         />
       )}
@@ -300,9 +292,9 @@ const ImageCarousel: React.FC<{ images: string[]; title: string }> = ({ images, 
   );
 };
 
-// =============================================
+// ─────────────────────────────────────────────
 // PROJECT CARD
-// =============================================
+// ─────────────────────────────────────────────
 const ProjectCard: React.FC<{ project: typeof projectData[0] }> = ({ project }) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -311,31 +303,22 @@ const ProjectCard: React.FC<{ project: typeof projectData[0] }> = ({ project }) 
       variants={{
         hidden: { opacity: 0, y: 50 },
         visible: {
-          opacity: 1,
-          y: 0,
+          opacity: 1, y: 0,
           transition: { type: "spring", stiffness: 100, damping: 10 },
         },
       }}
       className="bg-theme-bg/50 p-6 rounded-xl shadow-2xl border border-theme-muted/20 hover:border-theme-primary transition-all duration-300 flex flex-col"
     >
       {/* Header */}
-      <h2 className="text-2xl font-bold text-theme-base mb-1 leading-snug">
-        {project.title}
-      </h2>
-      <p className="text-base font-medium text-theme-muted mb-2">
-        {project.subtitle}
-      </p>
-      <p className="text-sm font-semibold text-theme-accent mb-4">
-        {project.stack}
-      </p>
+      <h2 className="text-2xl font-bold text-theme-base mb-1">{project.title}</h2>
+      <p className="text-base font-medium text-theme-muted mb-2">{project.subtitle}</p>
+      <p className="text-sm font-semibold text-theme-accent mb-4">{project.stack}</p>
 
-      {/* Carousel */}
-      <ImageCarousel images={project.images} title={project.title} />
+      {/* Stacked Images */}
+      <StackedImages images={project.images} title={project.title} />
 
       {/* Description */}
-      <p className="text-theme-base text-sm mb-3 whitespace-pre-line">
-        {project.description}
-      </p>
+      <p className="text-theme-base text-sm mb-3 whitespace-pre-line">{project.description}</p>
 
       {/* Expandable */}
       {expanded && (
@@ -358,19 +341,16 @@ const ProjectCard: React.FC<{ project: typeof projectData[0] }> = ({ project }) 
               </ul>
             </div>
           )}
-
           <div className="mb-4">
             <p className="text-sm font-bold text-theme-base mb-2">Tech Stack:</p>
             <ul className="space-y-2">
               {project.techStack.map((t, i) => (
                 <li key={i} className="text-sm text-theme-base">
-                  <span className="font-semibold text-theme-accent">{t.label}:</span>{" "}
-                  {t.detail}
+                  <span className="font-semibold text-theme-accent">{t.label}:</span> {t.detail}
                 </li>
               ))}
             </ul>
           </div>
-
           {project.hasWarning && (
             <div className="mt-3 p-3 rounded-lg border border-yellow-400/50 bg-yellow-400/10">
               <p className="text-yellow-400 text-xs font-semibold flex items-start gap-2">
@@ -390,7 +370,6 @@ const ProjectCard: React.FC<{ project: typeof projectData[0] }> = ({ project }) 
         >
           {expanded ? "Read Less ↑" : "Read More ↓"}
         </button>
-
         <a
           href={project.link}
           target="_blank"
@@ -407,14 +386,13 @@ const ProjectCard: React.FC<{ project: typeof projectData[0] }> = ({ project }) 
   );
 };
 
-// =============================================
+// ─────────────────────────────────────────────
 // MAIN PAGE
-// =============================================
+// ─────────────────────────────────────────────
 const ProjectsPage: React.FC = () => {
   return (
     <main className="container mx-auto p-4 md:p-8 min-h-screen">
       <div className="max-w-5xl mx-auto">
-
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -437,7 +415,6 @@ const ProjectsPage: React.FC = () => {
             <ProjectCard key={index} project={project} />
           ))}
         </motion.div>
-
       </div>
     </main>
   );
