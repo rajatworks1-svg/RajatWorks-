@@ -2,22 +2,18 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
-// =============================================
-// HOW TO ADD IMAGES:
-// 1. Put screenshots in /public/images/ folder
-// 2. Add paths to images array for each project
-// Example: images: ["/images/mira1.png", "/images/mira2.png"]
-// Up to 7 images per project supported
-// =============================================
+const BASE = "https://res.cloudinary.com/dbshw2jxv/image/upload";
 
 const projectData = [
   {
     title: "MIRA",
     subtitle: "AI-Powered Chat Agent",
     stack: "React, Next.js, Node.js, Vercel",
+    link: "https://rajatworks-mira.vercel.app/",
     images: [
-      // "/images/mira1.png",
-      // "/images/mira2.png",
+      `${BASE}/IMG_20260222_223953_fk41hb.jpg`,
+      `${BASE}/IMG_20260222_223929_vdwboh.jpg`,
+      `${BASE}/IMG_20260222_223914_fjpbk3.jpg`,
     ],
     hasWarning: true,
     warning: "Live API integrations are currently paused. Core features including authentication, chat history, and multi-model routing are fully implemented and functional in the complete version.",
@@ -34,9 +30,13 @@ const projectData = [
     title: "ANON",
     subtitle: "E-Commerce Platform",
     stack: "Vue.js, Element UI, Vercel, Google API",
+    link: "https://rajatworks-anon.vercel.app/",
     images: [
-      // "/images/anon1.png",
-      // "/images/anon2.png",
+      `${BASE}/IMG_20260222_224520_k13pig.jpg`,
+      `${BASE}/IMG_20260222_224618_t6ysmm.jpg`,
+      `${BASE}/IMG_20260222_224601_caidle.jpg`,
+      `${BASE}/IMG_20260222_224529_x3rjju.jpg`,
+      `${BASE}/IMG_20260222_224544_ytby66.jpg`,
     ],
     hasWarning: false,
     warning: "",
@@ -55,9 +55,14 @@ const projectData = [
     title: "Phone Shop",
     subtitle: "Mobile Devices E-Commerce",
     stack: "Vercel, Cloudflare, Google API, AOS",
+    link: "https://rajatworks-teck.vercel.app/",
     images: [
-      // "/images/phoneshop1.png",
-      // "/images/phoneshop2.png",
+      `${BASE}/IMG_20260222_224631_felxid.jpg`,
+      `${BASE}/IMG_20260222_224720_qwcqyo.jpg`,
+      `${BASE}/IMG_20260222_224643_dtorqt.jpg`,
+      `${BASE}/IMG_20260222_224652_z3twqi.jpg`,
+      `${BASE}/IMG_20260222_224709_kb4vk4.jpg`,
+      `${BASE}/IMG_20260222_224737_xlkctz.jpg`,
     ],
     hasWarning: false,
     warning: "",
@@ -76,9 +81,12 @@ const projectData = [
     title: "Voltri",
     subtitle: "AI Image to 3D Model Converter",
     stack: "React, Vite, Tailwind CSS, Supabase, Microsoft Trellis API",
+    link: "https://voltri.vercel.app/",
     images: [
-      // "/images/voltri1.png",
-      // "/images/voltri2.png",
+      `${BASE}/IMG_20260222_224914_iag0wb.jpg`,
+      `${BASE}/IMG_20260222_224944_dbhmyy.jpg`,
+      `${BASE}/IMG_20260222_224955_cqbzkj.jpg`,
+      `${BASE}/IMG_20260222_224934_txdsx7.jpg`,
     ],
     hasWarning: true,
     warning: "3D model generation is temporarily paused due to API integration adjustments. All other features including authentication, credit system, and subscription management are fully functional.",
@@ -103,28 +111,17 @@ const projectData = [
 ];
 
 // =============================================
-// CAROUSEL COMPONENT
+// CAROUSEL
 // =============================================
 const ImageCarousel: React.FC<{ images: string[]; title: string }> = ({ images, title }) => {
   const [current, setCurrent] = useState(0);
-
-  if (images.length === 0) {
-    return (
-      <div className="bg-theme-muted/10 h-48 rounded-lg mb-4 flex flex-col items-center justify-center text-theme-muted/40 text-xs italic border border-dashed border-theme-muted/20 gap-2">
-        <span className="text-3xl">🖼️</span>
-        <span>Put screenshots in /public/images/</span>
-        <span>Then add paths to images[] in projectData</span>
-      </div>
-    );
-  }
 
   const prev = () => setCurrent((c) => (c === 0 ? images.length - 1 : c - 1));
   const next = () => setCurrent((c) => (c === images.length - 1 ? 0 : c + 1));
 
   return (
     <div className="relative mb-4 rounded-lg overflow-hidden group">
-      {/* Image */}
-      <div className="h-48 bg-theme-muted/10">
+      <div className="h-52 bg-theme-muted/10">
         <img
           src={images[current]}
           alt={`${title} screenshot ${current + 1}`}
@@ -132,28 +129,25 @@ const ImageCarousel: React.FC<{ images: string[]; title: string }> = ({ images, 
         />
       </div>
 
-      {/* Arrows - only show if more than 1 image */}
       {images.length > 1 && (
         <>
           <button
             onClick={prev}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg transition-all opacity-0 group-hover:opacity-100"
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/90 text-white rounded-full w-8 h-8 flex items-center justify-center text-xl transition-all opacity-0 group-hover:opacity-100"
           >
             ‹
           </button>
           <button
             onClick={next}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg transition-all opacity-0 group-hover:opacity-100"
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/90 text-white rounded-full w-8 h-8 flex items-center justify-center text-xl transition-all opacity-0 group-hover:opacity-100"
           >
             ›
           </button>
 
-          {/* Counter */}
           <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded-full">
             {current + 1}/{images.length}
           </div>
 
-          {/* Dots */}
           <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
             {images.map((_, i) => (
               <button
@@ -244,7 +238,7 @@ const ProjectCard: React.FC<{ project: typeof projectData[0] }> = ({ project }) 
             </ul>
           </div>
 
-          {/* Yellow Warning Note */}
+          {/* Yellow Warning */}
           {project.hasWarning && (
             <div className="mt-3 p-3 rounded-lg border border-yellow-400/50 bg-yellow-400/10">
               <p className="text-yellow-400 text-xs font-semibold flex items-start gap-2">
@@ -256,13 +250,32 @@ const ProjectCard: React.FC<{ project: typeof projectData[0] }> = ({ project }) 
         </motion.div>
       )}
 
-      {/* Read More / Read Less */}
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="mt-4 self-start text-sm text-theme-primary hover:text-theme-accent font-semibold transition-colors"
-      >
-        {expanded ? "Read Less ↑" : "Read More ↓"}
-      </button>
+      {/* Bottom Row: Read More + Visit Site */}
+      <div className="mt-4 flex items-center justify-between">
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="text-sm text-theme-primary hover:text-theme-accent font-semibold transition-colors"
+        >
+          {expanded ? "Read Less ↑" : "Read More ↓"}
+        </button>
+
+        <a
+          href={project.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-sm text-theme-primary hover:text-theme-accent font-semibold transition-colors group"
+        >
+          Visit Site
+          <svg
+            className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+      </div>
     </motion.div>
   );
 };
