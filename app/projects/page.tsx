@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 const BASE = "https://res.cloudinary.com/dbshw2jxv/image/upload";
@@ -111,57 +111,192 @@ const projectData = [
 ];
 
 // =============================================
-// CAROUSEL
+// LIGHTBOX (Fullscreen viewer)
 // =============================================
-const ImageCarousel: React.FC<{ images: string[]; title: string }> = ({ images, title }) => {
-  const [current, setCurrent] = useState(0);
+const Lightbox: React.FC<{
+  images: string[];
+  startIndex: number;
+  onClose: () => void;
+}> = ({ images, startIndex, onClose }) => {
+  const [current, setCurrent] = useState(startIndex);
 
   const prev = () => setCurrent((c) => (c === 0 ? images.length - 1 : c - 1));
   const next = () => setCurrent((c) => (c === images.length - 1 ? 0 : c + 1));
 
+  // Close on Escape key
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'ArrowRight') next();
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
+  // Prevent body scroll when lightbox open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
   return (
-    <div className="relative mb-4 rounded-lg overflow-hidden group">
-      <div className="h-52 bg-theme-muted/10">
-        <img
-          src={images[current]}
-          alt={`${title} screenshot ${current + 1}`}
-          className="w-full h-full object-cover rounded-lg transition-opacity duration-300"
-        />
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/95"
+      onClick={onClose}
+    >
+      {/* Close button */}
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 text-white bg-white/10 hover:bg-white/20 rounded-full w-10 h-10 flex items-center justify-center text-xl z-10 transition-all"
+      >
+        ✕
+      </button>
+
+      {/* Counter */}
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 text-white/70 text-sm bg-black/40 px-3 py-1 rounded-full">
+        {current + 1} / {images.length}
       </div>
 
+      {/* Left Arrow */}
       {images.length > 1 && (
-        <>
-          <button
-            onClick={prev}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/90 text-white rounded-full w-8 h-8 flex items-center justify-center text-xl transition-all opacity-0 group-hover:opacity-100"
-          >
-            ‹
-          </button>
-          <button
-            onClick={next}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/90 text-white rounded-full w-8 h-8 flex items-center justify-center text-xl transition-all opacity-0 group-hover:opacity-100"
-          >
-            ›
-          </button>
-
-          <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded-full">
-            {current + 1}/{images.length}
-          </div>
-
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {images.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrent(i)}
-                className={`rounded-full transition-all duration-200 ${
-                  i === current ? 'bg-white w-3 h-1.5' : 'bg-white/50 w-1.5 h-1.5'
-                }`}
-              />
-            ))}
-          </div>
-        </>
+        <button
+          onClick={(e) => { e.stopPropagation(); prev(); }}
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-white/10 hover:bg-white/25 rounded-full w-12 h-12 flex items-center justify-center text-2xl transition-all z-10"
+        >
+          ‹
+        </button>
       )}
-    </div>
+
+      {/* Image */}
+      <motion.img
+        key={current}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.2 }}
+        src={images[current]}
+        alt={`Image ${current + 1}`}
+        className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg select-none"
+        onClick={(e) => e.stopPropagation()}
+      />
+
+      {/* Right Arrow */}
+      {images.length > 1 && (
+        <button
+          onClick={(e) => { e.stopPropagation(); next(); }}
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-white bg-white/10 hover:bg-white/25 rounded-full w-12 h-12 flex items-center justify-center text-2xl transition-all z-10"
+        >
+          ›
+        </button>
+      )}
+
+      {/* Dot indicators */}
+      {images.length > 1 && (
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+          {images.map((_, i) => (
+            <button
+              key={i}
+              onClick={(e) => { e.stopPropagation(); setCurrent(i); }}
+              className={`rounded-full transition-all duration-200 ${
+                i === current ? 'bg-white w-4 h-2' : 'bg-white/40 w-2 h-2'
+              }`}
+            />
+          ))}
+        </div>
+      )}
+    </motion.div>
+  );
+};
+
+// =============================================
+// THUMBNAIL CAROUSEL (in card)
+// =============================================
+const ImageCarousel: React.FC<{ images: string[]; title: string }> = ({ images, title }) => {
+  const [current, setCurrent] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  const prev = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrent((c) => (c === 0 ? images.length - 1 : c - 1));
+  };
+  const next = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrent((c) => (c === images.length - 1 ? 0 : c + 1));
+  };
+
+  return (
+    <>
+      {/* Thumbnail */}
+      <div
+        className="relative mb-4 rounded-lg overflow-hidden group cursor-zoom-in"
+        onClick={() => setLightboxOpen(true)}
+      >
+        <div className="h-56 bg-black flex items-center justify-center">
+          <img
+            src={images[current]}
+            alt={`${title} screenshot ${current + 1}`}
+            className="max-w-full max-h-full w-full h-full object-contain transition-opacity duration-300"
+          />
+        </div>
+
+        {/* Zoom hint */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-200 flex items-center justify-center">
+          <span className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs bg-black/60 px-2 py-1 rounded-full">
+            🔍 Tap to expand
+          </span>
+        </div>
+
+        {images.length > 1 && (
+          <>
+            {/* Left arrow */}
+            <button
+              onClick={prev}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/90 text-white rounded-full w-8 h-8 flex items-center justify-center text-xl transition-all opacity-0 group-hover:opacity-100 z-10"
+            >
+              ‹
+            </button>
+
+            {/* Right arrow */}
+            <button
+              onClick={next}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/90 text-white rounded-full w-8 h-8 flex items-center justify-center text-xl transition-all opacity-0 group-hover:opacity-100 z-10"
+            >
+              ›
+            </button>
+
+            {/* Counter */}
+            <div className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded-full z-10">
+              {current + 1}/{images.length}
+            </div>
+
+            {/* Dots */}
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+              {images.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={(e) => { e.stopPropagation(); setCurrent(i); }}
+                  className={`rounded-full transition-all duration-200 ${
+                    i === current ? 'bg-white w-3 h-1.5' : 'bg-white/50 w-1.5 h-1.5'
+                  }`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Lightbox */}
+      {lightboxOpen && (
+        <Lightbox
+          images={images}
+          startIndex={current}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
+    </>
   );
 };
 
@@ -202,7 +337,7 @@ const ProjectCard: React.FC<{ project: typeof projectData[0] }> = ({ project }) 
         {project.description}
       </p>
 
-      {/* Expandable Section */}
+      {/* Expandable */}
       {expanded && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -210,7 +345,6 @@ const ProjectCard: React.FC<{ project: typeof projectData[0] }> = ({ project }) 
           transition={{ duration: 0.3 }}
           className="mt-2"
         >
-          {/* Key Features */}
           {project.keyFeatures.length > 0 && (
             <div className="mb-4">
               <p className="text-sm font-bold text-theme-base mb-2">Key Features:</p>
@@ -225,7 +359,6 @@ const ProjectCard: React.FC<{ project: typeof projectData[0] }> = ({ project }) 
             </div>
           )}
 
-          {/* Tech Stack */}
           <div className="mb-4">
             <p className="text-sm font-bold text-theme-base mb-2">Tech Stack:</p>
             <ul className="space-y-2">
@@ -238,7 +371,6 @@ const ProjectCard: React.FC<{ project: typeof projectData[0] }> = ({ project }) 
             </ul>
           </div>
 
-          {/* Yellow Warning */}
           {project.hasWarning && (
             <div className="mt-3 p-3 rounded-lg border border-yellow-400/50 bg-yellow-400/10">
               <p className="text-yellow-400 text-xs font-semibold flex items-start gap-2">
@@ -250,7 +382,7 @@ const ProjectCard: React.FC<{ project: typeof projectData[0] }> = ({ project }) 
         </motion.div>
       )}
 
-      {/* Bottom Row: Read More + Visit Site */}
+      {/* Bottom Row */}
       <div className="mt-4 flex items-center justify-between">
         <button
           onClick={() => setExpanded(!expanded)}
@@ -266,12 +398,7 @@ const ProjectCard: React.FC<{ project: typeof projectData[0] }> = ({ project }) 
           className="inline-flex items-center gap-1 text-sm text-theme-primary hover:text-theme-accent font-semibold transition-colors group"
         >
           Visit Site
-          <svg
-            className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
         </a>
