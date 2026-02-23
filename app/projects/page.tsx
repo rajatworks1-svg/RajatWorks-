@@ -72,7 +72,7 @@ Phone Shop demonstrates strong attention to performance optimization, visual pol
   {
     title: "Voltri",
     subtitle: "AI Image to 3D Model Converter",
-    stack: "React, Vite, Tailwind CSS, Supabase, NVIDIA Trellis API",
+    stack: "React, Vite, Tailwind CSS, Supabase, MICROSOFT Trellis",
     image: "", // Replace with: "/images/voltri.png"
     hasWarning: true,
     warning: "3D model generation is temporarily paused due to API integration adjustments. All other features including authentication, credit system, and subscription management are fully functional.",
